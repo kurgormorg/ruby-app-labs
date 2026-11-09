@@ -1,0 +1,14 @@
+/.bundle
+/vendor/bundle
+/log/*
+!/log/.keep
+/tmp/*
+!/tmp/.keep
+!/tmp/pids
+/tmp/pids/*
+!/tmp/pids/.keep
+/config/master.key
+/config/secrets.yml
+/.env
+/.idea
+/.local-postgres

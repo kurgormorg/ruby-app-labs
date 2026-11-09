@@ -1,0 +1,17 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV.fetch("PGHOST", "127.0.0.1") %>
+  port: <%= ENV.fetch("PGPORT", 5433) %>
+  username: <%= ENV.fetch("PGUSER", "messenger_admin") %>
+  password: <%= ENV["PGPASSWORD"] || (Rails.root.join("config/secrets.yml").exist? ? Rails.application.config_for(:secrets).dig(:database, :password) : nil) %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+development:
+  <<: *default
+  database: corporate_messenger_development
+test:
+  <<: *default
+  database: corporate_messenger_test
+production:
+  <<: *default
+  database: corporate_messenger_production
