@@ -1,0 +1,18 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV.fetch("PGHOST", "127.0.0.1") %>
+  port: <%= ENV.fetch("PGPORT", 5434) %>
+  username: <%= ENV.fetch("PGUSER", "api_admin") %>
+  password: <%= ENV.fetch("PGPASSWORD") { Rails.application.config_for(:secrets).dig(:database, :password) } %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+
+development:
+  <<: *default
+  database: api_rails_pg_development
+test:
+  <<: *default
+  database: api_rails_pg_test
+production:
+  <<: *default
+  database: api_rails_pg_production

@@ -1,0 +1,10 @@
+/.bundle
+/log/*
+!/log/.keep
+/tmp/*
+!/tmp/.keep
+/config/master.key
+/config/secrets.yml
+/.idea
+/.local-postgres/
+/tmp/postgres-password

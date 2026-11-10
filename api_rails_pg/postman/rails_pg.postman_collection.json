@@ -1,0 +1,586 @@
+{
+  "info": {
+    "name": "Rails + PG — практические задания",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/v1"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET /companies",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/companies"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET /companies/4",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/companies/4"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET /companies/4/jobs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/companies/4/jobs"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET /companies/4/jobs/6",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/companies/4/jobs/6"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET /jobs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/jobs"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Отсутствует company_id",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/jobs",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \".NET\", \"place\": \"Minsk\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 422\", () => pm.response.to.have.status(422));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Нет маршрута",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/unknown"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Создать компанию",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/companies",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"Malta\", \"location\": \"Minsk\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"company_id\", pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Создать вакансию",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/jobs",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"JS Angular\", \"place\": \"Tomsk\", \"company_id\": \"{{company_id}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"job_id\", pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Создать соискателя",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/geeks",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"Test\", \"stack\": \"JS\", \"resume\": \"JS developer\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"geek_id\", pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Создать отклик",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/applies",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"job_id\": \"{{job_id}}\", \"geek_id\": \"{{geek_id}}\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"apply_id\", pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Обновить компанию",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/companies/{{company_id}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"location\": \"London\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Обновить вакансию",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/jobs/{{job_id}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"place\": \"Remote\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Обновить соискателя",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/geeks/{{geek_id}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"stack\": \"Ruby JS\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Обновить отклик",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{base_url}}/applies/{{apply_id}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"read\": false, \"invited\": false}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Прочитать отклик",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": "{{base_url}}/applies/{{apply_id}}/mark_read"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Прочитан\", () => pm.expect(pm.response.json().read).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Пригласить соискателя",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": "{{base_url}}/applies/{{apply_id}}/invite"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Приглашён\", () => pm.expect(pm.response.json().invited).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Логическое удаление компании",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": "{{base_url}}/companies/{{company_id}}/mark_deleted"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Помечена\", () => pm.expect(pm.response.json().deleted_company.deleted).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Повторное логическое удаление",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": "{{base_url}}/companies/{{company_id}}/mark_deleted"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Уже удалена\", () => pm.expect(pm.response.json().deleted_already).to.eql(\"not_modified\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Удалить отклик",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{base_url}}/applies/{{apply_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Логическое удаление вакансии",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{base_url}}/jobs/{{job_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Помечена\", () => pm.expect(pm.response.json().deleted_job.deleted).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Удалить соискателя",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{base_url}}/geeks/{{geek_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Удалить компанию",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{base_url}}/companies/{{company_id}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
