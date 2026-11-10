@@ -47,6 +47,11 @@ GEM
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
+    active_model_serializers (0.10.16)
+      actionpack (>= 4.1)
+      activemodel (>= 4.1)
+      case_transform (>= 0.2)
+      jsonapi-renderer (>= 0.1.1.beta1, < 0.3)
     activejob (8.1.3)
       activesupport (= 8.1.3)
       globalid (>= 0.3.6)
@@ -80,6 +85,8 @@ GEM
     bootsnap (1.24.0)
       msgpack (~> 1.2)
     builder (3.3.0)
+    case_transform (0.2)
+      activesupport
     concurrent-ruby (1.3.6)
     connection_pool (3.0.2)
     crass (1.0.6)
@@ -98,6 +105,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.19.4)
+    jsonapi-renderer (0.2.2)
     logger (1.7.0)
     loofah (2.25.1)
       crass (~> 1.0.2)
@@ -201,6 +209,7 @@ PLATFORMS
   x64-mingw-ucrt
 
 DEPENDENCIES
+  active_model_serializers (~> 0.10)
   bootsnap
   minitest (~> 5.25)
   pg (~> 1.6)

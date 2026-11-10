@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Messenger API" type="RubyRunConfigurationType" factoryName="Ruby">
+    <module name="web_api_pg" />
+    <option name="RUBY_ARGS" value="-E UTF-8:UTF-8" />
+    <option name="WORK DIR" value="$PROJECT_DIR$" />
+    <option name="SHOULD_USE_SDK" value="true" />
+    <option name="myPassParentEnvs" value="true" />
+    <option name="SCRIPT_PATH" value="$PROJECT_DIR$/script/ide_server.rb" />
+    <option name="SCRIPT_ARGS" value="" />
+    <option name="IS_RAILS_RUN" value="false" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,6 +1,6 @@
 class Api::V1::ResourcesController < ApplicationController
   def index
-    render_collection(collection.visible.order(:id))
+    render_collection(filtered(collection.visible).order(:id))
   end
 
   def show
@@ -29,6 +29,42 @@ class Api::V1::ResourcesController < ApplicationController
   alias_method :mark_deleted, :destroy
 
   private
+
+  def filtered(records)
+    records
+  end
+
+  def text_filter(records, field)
+    return records unless params[field].present?
+    value = params[field]
+    raise ArgumentError, "#{field} must be a string" unless value.is_a?(String)
+    column = records.klass.arel_table[field]
+    records.where(column.matches("%#{ActiveRecord::Base.sanitize_sql_like(value)}%"))
+  end
+
+  def exact_filter(records, field, allowed: nil)
+    return records unless params.key?(field)
+    value = params[field]
+    raise ArgumentError, "Invalid #{field}" unless value.is_a?(String) && value.present? && (!allowed || allowed.include?(value))
+    records.where(field => value)
+  end
+
+  def boolean_filter(records, field)
+    return records unless params.key?(field)
+    value = params[field]
+    raise ArgumentError, "#{field} must be true or false" unless %w[true false].include?(value)
+    records.where(field => value == "true")
+  end
+
+  def positive_id(field)
+    value = params[field].to_s
+    raise ArgumentError, "#{field} must be a positive integer" unless value.match?(/\A[1-9][0-9]{0,17}\z/)
+    value.to_i
+  end
+
+  def id_filter(records, field)
+    params.key?(field) ? records.where(field => positive_id(field)) : records
+  end
 
   def model_class
     self.class.name.demodulize.delete_suffix("Controller").singularize.constantize

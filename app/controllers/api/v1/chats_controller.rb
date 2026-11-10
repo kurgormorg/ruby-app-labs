@@ -6,6 +6,10 @@ class Api::V1::ChatsController < Api::V1::ResourcesController
 
   private
 
+  def filtered(records)
+    exact_filter(text_filter(records, :name), :kind, allowed: %w[group channel])
+  end
+
   def resource_params
     payload.permit(:name, :kind, :description)
   end

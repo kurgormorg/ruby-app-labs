@@ -1,3 +1,3 @@
 class EmployeeSerializer < ApplicationSerializer
-  ATTRIBUTES = %i[id name email department bio deleted].freeze
+  attributes :id, :name, :email, :department, :bio, :deleted
 end

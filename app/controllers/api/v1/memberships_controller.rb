@@ -12,10 +12,16 @@ class Api::V1::MembershipsController < Api::V1::ResourcesController
 
   private
 
+  def filtered(records)
+    records = exact_filter(records, :role, allowed: %w[owner member])
+    records = boolean_filter(records, :muted)
+    %i[employee_id chat_id].reduce(records) { |scope, field| id_filter(scope, field) }
+  end
+
   def collection
-    if params[:chat_id]
+    if request.path_parameters[:chat_id]
       Chat.visible.find(params[:chat_id]).memberships
-    elsif params[:employee_id]
+    elsif request.path_parameters[:employee_id]
       Employee.visible.find(params[:employee_id]).memberships
     else
       Membership.all

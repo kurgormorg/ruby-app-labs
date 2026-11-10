@@ -18,9 +18,10 @@ API: http://127.0.0.1:3000. Favicon: `/favicon.ico`.
 Bootsnap отключён, поскольку его нативный кеш не открывает этот путь.
 
 Учебный кластер находится в `.local-postgres`, слушает только 127.0.0.1:5433
-и не меняет существующий сервер на 5432. Локальное подключение — trust.
+и не меняет существующий сервер на 5432. Подключение требует пароль (SCRAM-SHA-256).
 Роль `messenger_admin` имеет LOGIN, SUPERUSER, CREATEDB, CREATEROLE, как в задании.
 Её сгенерированный пароль хранится в исключённом из Git `config/secrets.yml`.
+Там же отдельно хранится пароль администратора учебного кластера.
 Базы: `corporate_messenger_development`, `corporate_messenger_test`,
 `corporate_messenger_production`. Параметры подключения можно переопределить
 через PGHOST, PGPORT, PGUSER, PGPASSWORD или DATABASE_URL.
@@ -58,6 +59,7 @@ pg_ctl -D .local-postgres -l log/postgresql.log -o "-h 127.0.0.1 -p 5433" -w sta
 .\rails.ps1 runner script/console_checks.rb
 .\rails.ps1 db:test:prepare
 .\rails.ps1 test
+ruby -E UTF-8:UTF-8 -e "load File.join(Dir.pwd, 'script/check_database_auth.rb')"
 ```
 
 Связи для проверки в консоли:
@@ -100,6 +102,22 @@ JSON можно передавать плоским объектом или по
 сообщения и участия; при удалении сотрудника — его сообщения и участия.
 Прочтение хранится отдельно для каждого участника и не учитывает его собственные сообщения.
 
+Фильтры списков можно комбинировать:
+
+| Ресурс | Параметры |
+|---|---|
+| `/v1/employees` | `name`, `department`, `email` — поиск части строки без учёта регистра |
+| `/v1/chats` | `name` — поиск, `kind=group` или `kind=channel` |
+| `/v1/messages` | `body` — поиск, `employee_id`, `chat_id`, `read=true/false` вместе с `membership_id` |
+| `/v1/memberships` | `employee_id`, `chat_id`, `role=owner/member`, `muted=true/false` |
+
+Например: `/v1/employees?name=анна&department=разработка`,
+`/v1/chats/1/messages?body=задачи`,
+`/v1/messages?read=false&membership_id=2`.
+Прочтение определяется относительно указанного участия, собственные сообщения исключаются.
+Фильтры действуют и на списки сообщений/участий во вложенных маршрутах.
+Неправильные значения фильтров возвращают HTTP 400.
+
 Это учебный REST API по заданию: идентификатор сотрудника передаётся явно;
 вход в систему, проверка прав пользователя, WebSocket и интерфейс не входят в работу.
 
@@ -107,7 +125,7 @@ JSON можно передавать плоским объектом или по
 
 Импортировать JSON из `postman`, затем запустить всю коллекцию по порядку
 через Collection Runner. `base_url` по умолчанию `http://127.0.0.1:3000`.
-49 запросов создают собственные записи, проверяют CRUD, ошибки, прочтение
+56 запросов создают собственные записи, проверяют CRUD, фильтрацию, ошибки, прочтение
 и мягкое удаление. Идентификаторы сохраняются автоматически.
 Для запуска через Newman:
 
@@ -115,17 +133,24 @@ JSON можно передавать плоским объектом или по
 npm exec --yes --package=newman -- newman run postman/corporate_messenger.postman_collection.json
 ```
 
-В RubyMine выбрать этот каталог и Ruby SDK, запускать Rails с портом 3000.
+В RubyMine открыть именно каталог `web_api_pg` и выбрать Ruby SDK
+`D:\Ruby34-x64\bin\ruby.exe` в настройках Ruby SDK and Gems.
+В `.run` сохранены конфигурации `Messenger API` (порт 3000) и `Messenger Tests`.
+Их точки входа обходят проблему кириллицы в пути. Перед запуском выполнить `setup.ps1`.
+В `.idea/dataSources.xml` подготовлено локальное подключение к PostgreSQL:
+127.0.0.1, порт 5433, база corporate_messenger_development, пользователь messenger_admin.
+Для Test Connection ввести пароль из `config/secrets.yml`; при запросе IDE загрузить JDBC-драйвер.
+Пароль в конфигурацию IDE и Git не записывается. SDK и Test Connection нужно подтвердить в интерфейсе IDE.
 Для встроенного HTTP-клиента использовать `requests.http`.
 Регистрация в Postman и настройка личного RubyMine выполняются в пользовательских аккаунтах.
 
 ## GitHub
 
-Локальный Git-репозиторий находится в проекте. После создания пустого репозитория
-в своём аккаунте можно подключить его:
+Репозиторий задания: https://github.com/kurgormorg/ruby-app-labs.
+Локальная ветка — `main`. Проверка подключения и отправка следующих изменений:
 
 ```powershell
-git remote add origin https://github.com/ACCOUNT/corporate-messenger-api.git
+git remote -v
 git push -u origin main
 ```
 
@@ -134,6 +159,7 @@ git push -u origin main
 При адаптации примеров использована официальная документация:
 [Rails API](https://guides.rubyonrails.org/api_app.html),
 [валидации Active Record](https://guides.rubyonrails.org/active_record_validations.html).
-Сериализаторы используют встроенный `serializable_hash` с явным списком полей
-вместо необязательного `active_model_serializers`. Ошибки возвращают настоящий
+Сериализаторы наследуются от `ActiveModel::Serializer` из гема
+`active_model_serializers` и объявляют поля через `attributes`, как в методичке.
+Ошибки возвращают настоящий
 HTTP-статус, а вложенный маршрут проверяет принадлежность записи родителю.

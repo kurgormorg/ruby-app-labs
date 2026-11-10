@@ -1,8 +1,15 @@
 $ErrorActionPreference = 'Stop'
 Push-Location $PSScriptRoot
 try {
-    & bundle install --local
-    if ($LASTEXITCODE -ne 0) { throw 'bundle install failed; run bundle install with network access.' }
+    if (-not (Test-Path -LiteralPath '.idea/dataSources.xml')) {
+        New-Item -ItemType Directory -Path '.idea' -Force | Out-Null
+        Copy-Item -LiteralPath 'config/rubymine/dataSources.xml' -Destination '.idea/dataSources.xml'
+    }
+    & bundle check
+    if ($LASTEXITCODE -ne 0) {
+        & bundle install
+        if ($LASTEXITCODE -ne 0) { throw 'bundle install failed' }
+    }
     if (-not (Test-Path -LiteralPath '.local-postgres/PG_VERSION')) {
         & initdb -D .local-postgres -U postgres --auth=trust --encoding=UTF8 --locale=C
         if ($LASTEXITCODE -ne 0) { throw 'initdb failed' }

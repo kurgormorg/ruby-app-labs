@@ -6,6 +6,10 @@ class Api::V1::EmployeesController < Api::V1::ResourcesController
 
   private
 
+  def filtered(records)
+    %i[name department email].reduce(records) { |scope, field| text_filter(scope, field) }
+  end
+
   def resource_params
     payload.permit(:name, :email, :department, :bio)
   end

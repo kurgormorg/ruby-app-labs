@@ -899,6 +899,131 @@
       "name": "Главы 5–7 — прочтение и мягкое удаление",
       "item": [
         {
+          "name": "Фильтр сотрудников по email и отделу",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/v1/employees?email=first.{{run_id}}&department=Разработка"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('JSON response', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json'));",
+                  "pm.test('Filtered employee', () => pm.expect(pm.response.json().employees.map(x => x.id)).to.eql([Number(pm.collectionVariables.get('employee_id'))]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Фильтр чатов по названию и типу",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/v1/chats?name={{run_id}}&kind=group"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('JSON response', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json'));",
+                  "pm.test('Filtered chat', () => pm.expect(pm.response.json().chats.map(x => x.id)).to.eql([Number(pm.collectionVariables.get('chat_id'))]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Фильтр участий по роли и уведомлениям",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/v1/memberships?chat_id={{chat_id}}&muted=false&role=member"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('JSON response', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json'));",
+                  "pm.test('Filtered membership', () => pm.expect(pm.response.json().memberships.map(x => x.id)).to.eql([Number(pm.collectionVariables.get('second_membership_id'))]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Поиск по тексту сообщения",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/v1/chats/{{chat_id}}/messages?body=Исправленное"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('JSON response', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json'));",
+                  "pm.test('Filtered message', () => pm.expect(pm.response.json().messages.map(x => x.id)).to.eql([Number(pm.collectionVariables.get('message_id'))]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Фильтр непрочитанных",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/v1/messages?read=false&membership_id={{second_membership_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('JSON response', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json'));",
+                  "pm.test('Unread filter', () => pm.expect(pm.response.json().messages.length).to.eql(1));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ошибочное значение фильтра",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/v1/memberships?muted=maybe"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('JSON response', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "Пометить прочитанными",
           "request": {
             "method": "PUT",
@@ -913,6 +1038,27 @@
                 "exec": [
                   "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
                   "pm.test('JSON response', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Фильтр прочитанных",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/v1/messages?read=true&membership_id={{second_membership_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('JSON response', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json'));",
+                  "pm.test('Read filter', () => pm.expect(pm.response.json().messages.length).to.eql(1));"
                 ]
               }
             }

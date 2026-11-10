@@ -60,7 +60,20 @@ request('Ошибка: неизвестный маршрут', 'GET', '/unknown'
 request('Ошибка: запись не существует', 'GET', '/v1/messages/999999999', 404)
 request('Непрочитанные сообщения второго участника', 'GET', '/v1/memberships/{{second_membership_id}}/unread_messages',
         extra=["pm.test('One unread message', () => pm.expect(pm.response.json().messages.length).to.eql(1));"])
+request('Фильтр сотрудников по email и отделу', 'GET', '/v1/employees?email=first.{{run_id}}&department=Разработка',
+        extra=["pm.test('Filtered employee', () => pm.expect(pm.response.json().employees.map(x => x.id)).to.eql([Number(pm.collectionVariables.get('employee_id'))]));"])
+request('Фильтр чатов по названию и типу', 'GET', '/v1/chats?name={{run_id}}&kind=group',
+        extra=["pm.test('Filtered chat', () => pm.expect(pm.response.json().chats.map(x => x.id)).to.eql([Number(pm.collectionVariables.get('chat_id'))]));"])
+request('Фильтр участий по роли и уведомлениям', 'GET', '/v1/memberships?chat_id={{chat_id}}&muted=false&role=member',
+        extra=["pm.test('Filtered membership', () => pm.expect(pm.response.json().memberships.map(x => x.id)).to.eql([Number(pm.collectionVariables.get('second_membership_id'))]));"])
+request('Поиск по тексту сообщения', 'GET', '/v1/chats/{{chat_id}}/messages?body=Исправленное',
+        extra=["pm.test('Filtered message', () => pm.expect(pm.response.json().messages.map(x => x.id)).to.eql([Number(pm.collectionVariables.get('message_id'))]));"])
+request('Фильтр непрочитанных', 'GET', '/v1/messages?read=false&membership_id={{second_membership_id}}',
+        extra=["pm.test('Unread filter', () => pm.expect(pm.response.json().messages.length).to.eql(1));"])
+request('Ошибочное значение фильтра', 'GET', '/v1/memberships?muted=maybe', 400)
 request('Пометить прочитанными', 'PUT', '/v1/memberships/{{second_membership_id}}/mark_read')
+request('Фильтр прочитанных', 'GET', '/v1/messages?read=true&membership_id={{second_membership_id}}',
+        extra=["pm.test('Read filter', () => pm.expect(pm.response.json().messages.length).to.eql(1));"])
 request('Проверить отсутствие непрочитанных', 'GET', '/v1/memberships/{{second_membership_id}}/unread_messages',
         extra=["pm.test('No unread messages', () => pm.expect(pm.response.json().messages).to.be.empty);"])
 request('Мягкое удаление сообщения', 'DELETE', '/v1/messages/{{message_id}}',
