@@ -1,0 +1,13 @@
+source 'https://rubygems.org'
+
+gem 'sinatra', '~> 4.2'
+gem 'sinatra-contrib', '~> 4.2'
+gem 'rackup', '~> 2.3'
+gem 'puma', '>= 7.0'
+gem 'json'
+gem 'multi_json'
+gem 'pg', '~> 1.6'
+gem 'sequel', '~> 5.0'
+gem 'sequel-seed'
+gem 'rake'
+gem 'dotenv'

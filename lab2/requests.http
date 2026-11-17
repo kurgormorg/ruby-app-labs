@@ -1,0 +1,41 @@
+### Корневой маршрут выбранного приложения
+GET http://localhost:4567/
+
+### Именованный параметр (classic / modular)
+GET http://localhost:4567/hello/Peter
+
+### Namespace (classic / modular)
+GET http://localhost:4567/api/v1/friends
+
+### Общий маршрут за пределами namespace (classic / modular)
+GET http://localhost:4567/friends
+
+### Далее — модульное приложение: ./run.ps1 modular-rack
+GET http://localhost:4567/redirect
+
+### Именованный параметр
+GET http://localhost:4567/players/football
+
+### Маска и параметр year
+GET http://localhost:4567/players/performances/2016
+
+### Регулярное выражение
+GET http://localhost:4567/meta/hello/12345/world
+
+### Регулярное выражение
+GET http://localhost:4567/meta/hello/world
+
+### Две маски
+GET http://localhost:4567/say/12345*/to/09876*
+
+### Путь и расширение
+GET http://localhost:4567/download/path/to/file.xml
+
+### Без формата
+GET http://localhost:4567/jobs
+
+### Формат JSON
+GET http://localhost:4567/jobs.json
+
+### Формат XML
+GET http://localhost:4567/jobs.xml

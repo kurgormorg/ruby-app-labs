@@ -1,0 +1,25 @@
+require 'bundler/setup'
+require 'dotenv/load'
+require 'sequel'
+require 'uri'
+
+namespace :db do
+  desc 'Create the Sinatra database'
+  task :create do
+    url = URI(ENV.fetch('DATABASE_URL', 'postgres://api_admin:api_admin@127.0.0.1:5434/api_sinatra_pg_development'))
+    name = url.path.delete_prefix('/')
+    url.path = '/postgres'
+    Sequel.connect(url.to_s) do |db|
+      unless db[:pg_database].where(datname: name).any?
+        db.run("CREATE DATABASE #{db.literal(Sequel.identifier(name))}")
+      end
+    end
+    puts "Database ready: #{name}"
+  end
+
+  desc 'Check PostgreSQL connection'
+  task :check do
+    require_relative 'config/database'
+    puts "PostgreSQL connected: #{DB.get(Sequel.function(:current_database))}"
+  end
+end

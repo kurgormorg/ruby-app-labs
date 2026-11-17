@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Lab2 modular Sinatra" type="RubyRunConfigurationType" factoryName="Ruby">
+    <module name="lab2" />
+    <option name="WORK DIR" value="$PROJECT_DIR$" />
+    <option name="RUBY_ARGS" value="-E UTF-8:UTF-8" />
+    <option name="SCRIPT_PATH" value="$PROJECT_DIR$/modular/my_sinatra.rb" />
+    <option name="SCRIPT_ARGS" value="" />
+    <option name="IS_MODULE_SDK" value="true" />
+    <method v="2" />
+  </configuration>
+</component>

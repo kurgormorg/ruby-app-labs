@@ -1,0 +1,4 @@
+/.bundle/
+/.env
+/.idea/
+/log/*.log
